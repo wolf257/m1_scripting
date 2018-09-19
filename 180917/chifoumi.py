@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
 #-*- coding : utf8 -*-
 
-#-------------------------------------
-#   GUEYE Ousseynou
-#   21 50 50 55
+#-------------------------------------------------
+#   GUEYE Ousseynou - M1 TAL Inalco - 21 50 50 55
 #       Chifouni en python3
-#-------------------------------------
+#-------------------------------------------------
 
 def askChoice(nom) :
     while 1 :
@@ -52,13 +51,15 @@ def main():
 
     for joueur in joueurs :
         choixDuJoueur = askChoice(joueur)
+
         # TEST
         # print("choix : " + choixDuJoueur)
+
         listeDesChoix[joueur] = int(choixDuJoueur)
 
     numeroVainqueur = whoWins(listeDesChoix[joueurs[0]] , listeDesChoix[joueurs[1]])
 
-    print("\n{} a joué {}, et {} a joué {}.".format(joueurs[0], nomDesChoix[listeDesChoix[joueurs[0]]] , joueurs[1] , nomDesChoix[listeDesChoix[joueurs[1]]]))
+    print("\n=====> {} a joué {}, et {} a joué {}.".format(joueurs[0], nomDesChoix[listeDesChoix[joueurs[0]]] , joueurs[1] , nomDesChoix[listeDesChoix[joueurs[1]]]))
 
     if numeroVainqueur == 2 :
         # c-a-d que les 2 gagnent, donc égalité.
