@@ -1,4 +1,4 @@
-# Consigne
+# Consignes (du cours du 17/09/18)
 
 ## Chifoumi
 
