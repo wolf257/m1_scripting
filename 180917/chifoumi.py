@@ -43,6 +43,8 @@ def whoWins(choix1 , choix2) :
 
 def main():
 
+    print("\n======= Bienvenue sur notre chifoumi =======\n")
+
     joueurs = ["Kobe" , "Lebron"]
     nomDesChoix = ["Papier" , "Cailloux" , "Ciseaux"]
 
@@ -67,8 +69,10 @@ def main():
         print("\nVotre programmeur est nul :-), c'est impossible !")
 
     else :
-        # c-a-d qu'il y a un vainqueur
+        # c-a-d qu'il y a un vainqueur.
         print("\nDonc {} a gagné.".format(joueurs[numeroVainqueur]))
+
+    print("\n======= Au revoir =======\n\n")
 
 if __name__ == '__main__':
     main()
