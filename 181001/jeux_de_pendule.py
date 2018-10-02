@@ -17,8 +17,7 @@ def main():
 
     print("\nBienvenu dans notre jeu du pendule. \n\nVous devez trouver le mot : {}.".format(" ".join(mot_a_trous)))
 
-    print("\nPour être gentil, vous avez droit {} erreurs, soit le nombre de lettres du mot.".format(nombreTentativesPermis) +\
-    "\nEn contrepartie, même si une lettre est présente plusieurs fois, elle apparaitra en autant de fois que d'occurences. Bonne chance !")
+    print("\nPour être gentil, vous avez droit {} erreurs, soit le nombre de lettres du mot.".format(nombreTentativesPermis))
 
 
     while numeroTentative < nombreTentativesPermis :
@@ -28,9 +27,8 @@ def main():
         if charFromUser in mot_a_trouve:
 
             indexLettreInMot = mot_a_trouve.index(charFromUser)
-
+            # on effectue le remplacement
             mot_a_trous[indexLettreInMot] = charFromUser
-            liste_des_index.append(indexLettreInMot)
 
             if ''.join(mot_a_trous) == mot_a_trouve :
                 didHeFindIt = True
