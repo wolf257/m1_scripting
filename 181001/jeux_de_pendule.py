@@ -3,21 +3,17 @@
 
 import random
 def main():
-# Liste des mots du pendu
-    liste_mots = [
-        "amour", "mort", "joie", "tristesse",
-        "python", "bash", "fichier", "repertoire", "livre", "feuille"]
+    # Liste des mots du pendu
+    liste_mots = ["vie", "mort", "joie"]
 
-    mot_a_trouve = 'feuille'
-    # mot_a_trouve = random.choice(liste_mots)
+    mot_a_trouve = random.choice(liste_mots)
     mot_a_trous = list("_"*len(mot_a_trouve))
-
     nombreTentativesPermis, numeroTentative = len(mot_a_trouve), 0
-
     didHeFindIt = False
 
-    liste_des_index = []
-
+    ######################################
+    # PRESENTATION
+    ######################################
 
     print("\nBienvenu dans notre jeu du pendule. \n\nVous devez trouver le mot : {}.".format(" ".join(mot_a_trous)))
 
@@ -33,15 +29,8 @@ def main():
 
             indexLettreInMot = mot_a_trouve.index(charFromUser)
 
-            # print("TEST : liste_des_index : {}. \n".format(liste_des_index))
-
-            if indexLettreInMot in liste_des_index :
-                indexLettreInMot = mot_a_trouve.index(charFromUser, indexLettreInMot+1)
-
             mot_a_trous[indexLettreInMot] = charFromUser
             liste_des_index.append(indexLettreInMot)
-
-            # print("TEST : liste_des_index : {}. \n".format(liste_des_index))
 
             if ''.join(mot_a_trous) == mot_a_trouve :
                 didHeFindIt = True
@@ -50,20 +39,17 @@ def main():
                 print("***Bien ! Il nous reste : {}.".format(" ".join(mot_a_trous)))
                 continue
 
-        # BON
         else:
             numeroTentative +=1
             tentativesRestantes = nombreTentativesPermis - numeroTentative
-            print ("***Oups. Il reste {} tentatives.".format(tentativesRestantes))
-
+            print ("***Oups. Il nous reste {} tentatives.".format(tentativesRestantes))
             continue
 
-    if didHeFindIt == True :
-        print("\nBien joué !")
-    else:
-        print("\nDommage. Le mot à trouver était : {}.".format(mot_a_trouve))
 
-    print("\n=== Au revoir. ===")
+    messageGood = "\nBien joué, c'était bien le mot : {}.".format(mot_a_trouve)
+    messageBad = "\nDommage. Le mot à trouver était : {}.".format(mot_a_trouve)
+
+    print(messageGood) if didHeFindIt == True else print(messageBad)
 
 if __name__ == '__main__':
     main()
