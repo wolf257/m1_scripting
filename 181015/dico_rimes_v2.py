@@ -6,42 +6,22 @@ import string
 
 def extractionDatas_FromLine_ToListOfTuples(nomFic):
     with open(nomFic, 'r') as filein:
-        # listDatas = [tuple(line.split('\t')[0:2]) for line in filein]
+        # on prend toutes les données
         listDatas = [tuple(line.split('\t')) for line in filein]
 
     return listDatas
 
-    # listDatas sous la forme :
-    # [('hindoues', '5du', 'hindou', 'NOM', 'f', 'p', '\n'),
-    #  ('réfrigérateur', 'RefRiZeRat9R', 'réfrigérateur', 'NOM', 'm', 's', '\n'), ... ]
-    # AVEC :
-    # orthograghe, phoneme, lemme = infosMot[0], infosMot[1], infosMot[2]
-    # cgram, genre, nombre = infosMot[3], infosMot[4], infosMot[5]
-
 def constructionOfRimeDict(lexique, longueurRimeVoulue):
-    # TODO : dans dico_3 (3 lettre rime) travailler sur le lemme au lieu de l'ortho !
-
     dico = {}
 
     for infosMot in lexique:
         orthograghe, phoneme, lemme = infosMot[0], infosMot[1], infosMot[2]
         cgram, genre, nombre = infosMot[3], infosMot[4], infosMot[5]
 
-        # ortho	    phon	     lemme	      cgram	genre	nombre
-        # épinglette	ep5glEt	     épinglette	  NOM	f	    s
-        # invariance	5vaRj@s	     invariance	  NOM	f	    s
-        # sociologue	sosjolOg	 sociologue	  NOM		    s
-        # appuis	    ap8i	     appui	      NOM	m	    p
-
-        # v1: dico[rime] = ['ortho1', ortho2 ...]
-
         if len(phoneme) >= longueurRimeVoulue:
             rime = phoneme[-longueurRimeVoulue:]
-            # On l'ajoute au dico
-            # v1 : dico.setdefault(rime, []).append(orthograghe)
 
             dico.setdefault(rime, {})
-
             if genre in dico[rime].keys() :
                 if nombre in dico[rime][genre].keys() :
                     dico[rime][genre][nombre].append(orthograghe)
@@ -50,21 +30,21 @@ def constructionOfRimeDict(lexique, longueurRimeVoulue):
             else :
                 dico[rime].setdefault(genre, {})
 
-            # dico[rime] = { masc { sing : [ortho1, ortho2 ...],
-                             #        pluriel : [ortho1, ortho2 ...]}
-                             # fem { sing : [ortho1, ortho2 ...],
-                             #       pluriel : [ortho1, ortho2 ...]}
+            # On aura une structure de type dict, de forme :
+            # dico[rime] = { 'f' { 's' : [... , ...],
+            #                         'p' : [..., ...],
+            #                         '' : [..., ...]}
+            #                'm' { 's' : [... , ...],
+            #                      'p' : [..., ...],
+            #                      '' : [..., ...]}
             # }
 
     return dico
 
 def trouveMonPhoneme(word, lexique):
     for item in lexique:
-        # item forme :
-        # ('réfrigérateur', 'RefRiZeRat9R', 'réfrigérateur', 'NOM', 'm', 's', '\n'),
-
-        orthograghe, phoneme, lemme = item[0], item[1], item[2]
-        cgram, genre, nombre = item[3], item[4], item[5]
+        orthograghe, phoneme = item[0], item[1],
+        genre, nombre = item[4], item[5]
 
         if word == orthograghe :
             return phoneme
@@ -73,41 +53,32 @@ def trouveMonPhoneme(word, lexique):
 
 def trouveMotRimant(word, dicoRimeL, listeMotsWithInfos, n=3):
 
-    # TODO : -si mot pas dans son dico, il est incapable de générer la rime.
-    #  il doit pouvoir, à défaut de 3 rimes, faire 2 rime,
-
     # 1 trouver la transcription phonétique
     monPhoneme = trouveMonPhoneme(word, listeMotsWithInfos)
 
     # CAS 1 : le phoneme n'existe pas dans la liste des mots (listeMotsWithInfos)
-    # TODO : le rendre intelligent
     # On arrête, on ne renvoie rien.
+    # TODO : le rendre intelligent
     if not monPhoneme:
         return None
 
-    # 2 extraire de la transcription les 3 derniers phonèmes (ou 2 le cas échéant)
-    # 3 trouver dans le dictionnaire la liste des mots du lexique qui ont la même suite de phonèmes finaux
-
     # CAS 2 : le phoneme existe dans la liste des mots (listeMotsWithInfos) :
     # On cherche si sa terminaison (phoneme avec longueurRimeVoulue) existe dans le
-        # dico des rimes (dicoRimeL)
-    # Si non, on arrête TODO :
+        # dico des rimes (dicoRimeL) ?
     maRime = monPhoneme[-n:]
 
+    # Si non, on ne renvoie rien :
     if maRime not in dicoRimeL:
         return None
 
-    # Si oui, on note la Rime concernée
+    # Si oui, on note l'entrée du dico correspondant à la rime
     entreeDicoRimant = dicoRimeL[maRime]
 
+    # TEST
     # print(f"\n- La rime concernée est : \'{maRime}\'")
     # print(f"\n- Elle est de forme : {rimeDuMot}")
-    # dico[rime] = { masc { sing : [ortho1, ortho2 ...],
-                     #        pluriel : [ortho1, ortho2 ...]}
-                     # fem { sing : [ortho1, ortho2 ...],
-                     #       pluriel : [ortho1, ortho2 ...]}
-    # }
 
+    # On s'occupe du genre et du nombre de notre mot
     genre, nombre = None, None
 
     if  'f' in entreeDicoRimant :
@@ -138,51 +109,33 @@ def trouveMotRimant(word, dicoRimeL, listeMotsWithInfos, n=3):
                 genre = 'm'
                 nombre = ''
 
+    # TEST
     # print(f"- Le mot \'{word}\' est de genre : \'{genre}\' et de nombre \'{nombre}\'.")
-    # rimeDuMot[genre][nombre].remove(word)
 
-    # SOUS-CAS2 : Si on note la Rime ET que le mot (pas le phoneme) existe dans le contenu
-        # de la rime, on va l'exclure, pour ne pas avoir un remplacement par lui-même
-    # if word in rimeDuMot:
-    #     rimeDuMot.remove(word)
-
-    # 4. piocher un mot au hasard dans la liste
+    # Si on trouve la localisation du mot, on sait où piocher notre mot rimant
     if (genre is not None) and (nombre is not None):
         ouPiocher = entreeDicoRimant[genre][nombre]
-    # print(f"\n- Où allons-nous piocher : {ouPiocher}")
+
+    # TEST
+    # print(f"\n- Bassin ou nous allons-nous piocher : {ouPiocher}")
 
         if len(ouPiocher) > 1 :
             rand = random.randint(0, len(ouPiocher) - 1)
             return ouPiocher[rand]
 
-
-# TODO -il n'accorde pas le genre (or il a info.)
-
 def main():
 
-    ficLexiqueBrute = 'nom-lexique-brut.txt'
-    # ficAModifier = 'brise-marine.txt'
-    ficAModifier = 'hugo-lhomme.txt'
+    listeFicSource = ['brise-marine.txt', 'hugo-amour.txt', 'hugo-amour.txt', 'lamartine-a-un-enfant.txt' ]
+    numficAModifier = random.randint(0, len(listeFicSource) - 1)
+    ficAModifier = listeFicSource[numficAModifier]
+    print(f"J'ai choisi le fichier : {ficAModifier}")
 
+    ficLexiqueBrute = 'nom-lexique-brut.txt'
     listeMotsWithInfos = extractionDatas_FromLine_ToListOfTuples(ficLexiqueBrute)
-    # pprint.pprint(listeMotsWithInfos)
 
     dicoRime_3pho = constructionOfRimeDict(listeMotsWithInfos, 3)
     dicoRime_2pho = constructionOfRimeDict(listeMotsWithInfos, 2)
     dicoRime_1pho = constructionOfRimeDict(listeMotsWithInfos, 1)
-
-    # pprint.pprint(dicoRime_3pho)
-    # pprint.pprint(dicoRime_2pho)
-    # pprint.pprint(dicoRime_1pho)
-
-    # for mot in ['jeunesse', 'beauté', 'vie', 'réfrigérateur', 'eau', 'amour'] :
-    #     print(f"\n******* MOT : {mot}")
-    #
-    #     monPhoneme = trouveMonPhoneme(mot, listeMotsWithInfos)
-    #     print(f"\n- Mon phoneme : {monPhoneme}.")
-    #
-    #     maRime = trouveMotRimant(mot, dicoRime_3pho, listeMotsWithInfos)
-    #     print(f"- Je propose comme mot rimant : {maRime}.")
 
     with open(ficAModifier, mode='r') as file:
         for line in file :
@@ -198,7 +151,6 @@ def main():
 
             newline = []
             for mot in motsDeLaLigne:
-                # print(mot)
                 # on sépare les signes de ponctuation des mots
                 if mot[-1] in punct:
                     signe = mot[-1]
@@ -208,18 +160,10 @@ def main():
                 else:
                     newline.append(mot)
 
-            print(f"\n\n*** Ligne de base : \n\t{line}")
-            # print(f"- Transfo en liste : \n\t{motsDeLaLigne}")
-            # print(f"\n- Après traitement : \n\t{newline}")
-
             for wordATransforme in newline :
                 index = newline.index(wordATransforme)
                 if wordATransforme in punct :
                     continue
-                # if len(wordATransforme) <=3 :
-                #     continue
-
-                # print(f"\n +++ {wordATransforme}")
 
                 rimeEn3 = trouveMotRimant(wordATransforme, dicoRime_3pho, listeMotsWithInfos)
                 if rimeEn3 :
@@ -234,8 +178,9 @@ def main():
                         if rimeEn1 :
                             newline[index] = rimeEn1
 
+            print(f"\n\n*** : {line}")
             newline = ' '.join(newline)
-            print(f"\n+++ Ligne modifiée : \n\t{newline}")
+            print(f"+++ {newline}")
 
 if __name__ == '__main__':
     main()
