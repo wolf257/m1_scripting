@@ -76,7 +76,6 @@ def show_5RandomSMS_aTraiter(nombreSMS_aTraiter, liste_N_SMS_auHasard):
         print(f"{i} : {sms}")
 
 def show_NbMotsHorsLexique(nombreSMS_aTraiter, ensembleDesMotsHorsLexique):
-    print("\n--------------------------------------")
     print(f"Sur ces {nombreSMS_aTraiter} sms, nous avons {len(ensembleDesMotsHorsLexique)} mots hors lexique.")
 
 def show_10RandomMotsHorsLexique(ensembleDesMotsHorsLexique):
@@ -134,10 +133,11 @@ def initialisation_des_donnees(listeDesSMS, ensembleMotsLexique, liste_N_SMS_auH
 #=====================================================================================
 
 def remplir_dicoAbbr_aPartir_ensHorsLexique(dicoAbbr, ensembleDesMotsHorsLexique, linkToDbAbbr):
+    listeOut = []
 
-    while 1:
-
-        print(f"---- on a {len(dicoAbbr)} abbr. Up to the next.")
+    while (1 and len(ensembleDesMotsHorsLexique) > 0):
+        # TEST
+        # print(f"---- on a {len(dicoAbbr)} abbr. Up to the next.")
 
         # on choisit un mot au hasard
         mot_et_contexte = random.sample(ensembleDesMotsHorsLexique, 1) # produit une liste
@@ -153,11 +153,15 @@ def remplir_dicoAbbr_aPartir_ensHorsLexique(dicoAbbr, ensembleDesMotsHorsLexique
         if mot in dicoAbbr.keys():
             continue
 
+        # si on avait demandé à ne pas revoir le mot pendant cette session
+        if mot in listeOut:
+            continue
+
         # sinon, on peut commencer
         print(f"\n+++++++ NEW WORD +++++++")
         print(f"- Mot : {mot} \n- Contexte : {contexte}")
 
-        a = input("\nSignification, (0) si vous ne savez pas, (enter) pour quitter : ")
+        a = input("\nOPTIONS : Écrivez la signification, ou \n- (s) si vous ne voulez plus le voir cette session - (0) si vous ne savez pas, - (enter) pour quitter \n\t Réponse : ")
 
         if isinstance(a, str) and len(a.strip()) > 1 :
             signification = a.strip()
@@ -167,6 +171,10 @@ def remplir_dicoAbbr_aPartir_ensHorsLexique(dicoAbbr, ensembleDesMotsHorsLexique
             continue
 
         elif a.strip() == '0' :
+            continue
+
+        elif a.strip() == 's' :
+            listeOut.append(mot)
             continue
 
         elif a.strip() == '' :

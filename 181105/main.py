@@ -33,12 +33,19 @@ def main():
             if a.strip() == '2' :
 
                 dicoAbbr = mesfonctions.load_dico_abbr(dicoAbbr, linkToDbAbbr)
-                print(f"\nNous avons déjà défini {len(dicoAbbr.keys())} abbréviations, dont par ex :")
-                print(f"{dicoAbbr}")
-                # for c in random.sample(list(dicoAbbr.items()), 5) :
-                #     print(f"{c[0]} --> {c[1]}")
+                print(f"\nNous avons déjà défini {len(dicoAbbr.keys())} abbréviations.")
+                c = input("Voulez-vous voir le contenu du dictionnaire ? (o)ui ou (enter) pour continuer : ")
 
-            b = input("\n..... Appuyer sur (enter) pour continuer .....")
+                if c.strip() == 'o' or c.strip() == 'O' :
+                    print(f"\nVoici le contenu du dictionnaire :")
+                    for abbr, value in dicoAbbr.items() :
+                        print(f"{abbr} --> {value}", end='  ,  ')
+                else :
+                    print(f"\nOk, voici quand même 5 éléments pris au hasard :")
+                    for c in random.sample(list(dicoAbbr.items()), 5) :
+                        print(f"{c[0]} --> {c[1]}")
+
+            b = input("\n\n..... Appuyer sur (enter) pour continuer .....")
 
             if b.strip() == '' :
                 mesfonctions.remplir_dicoAbbr_aPartir_ensHorsLexique(dicoAbbr, ensembleDesMotsHorsLexique, linkToDbAbbr)
