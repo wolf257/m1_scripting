@@ -1,6 +1,21 @@
 from lxml import etree
 import re
 import random
+import pickle
+
+#==============================================
+#=================== PICKLE ===================
+#==============================================
+
+def load_dico_abbr(dicoAbbr, link) :
+    with open(link, mode='rb') as filein:
+        dicoAbbr = pickle.load(filein)
+
+    return dicoAbbr
+
+def dump_dico_abbr(dicoAbbr, link) :
+    with open(link, mode='wb') as fileout:
+        pickle.dump(dicoAbbr, fileout)
 
 #========================================================
 #=================== DATAS_RETRIEVING ===================
@@ -73,3 +88,91 @@ def show_10RandomMotsHorsLexique(ensembleDesMotsHorsLexique):
         mot = f"{mot_et_contexte[0]}"
         contexte = f"{mot_et_contexte[1]}"
         print(f"{i} - Mot : {mot}, Contexte : {contexte}")
+
+#==========================================================================
+#=================== INIT DATAS (fonction de fonctions) ===================
+#==========================================================================
+
+def initialisation_des_donnees(listeDesSMS, ensembleMotsLexique, liste_N_SMS_auHasard, ensembleDesMotsHorsLexique, linkToficSMS, linkToficLexique) :
+
+    listeDesSMS = listeDesSMS
+
+    ensembleMotsLexique = ensembleMotsLexique
+
+    #===================================
+    recuperer_contenusSMS_et_ajouter_a_liste(linkToficSMS, listeDesSMS)
+
+    #===================================
+    recuperer_listeMot_et_ajouter_a_ensemble(linkToficLexique, ensembleMotsLexique)
+
+    #===================================
+    nombreSMS_aTraiter = 50
+
+    liste_N_SMS_auHasard = liste_N_SMS_auHasard # no need, juste une habitude.
+    liste_N_SMS_auHasard = random.sample(listeDesSMS, nombreSMS_aTraiter)
+
+    show_NbSMS_aTraiter(nombreSMS_aTraiter)
+    # mesfonctions.show_5RandomSMS_aTraiter(nombreSMS_aTraiter, liste_N_SMS_auHasard)
+
+    #===================================
+    ensembleDesMotsHorsLexique = ensembleDesMotsHorsLexique
+
+    for sms in liste_N_SMS_auHasard :
+        for word in sms.split() :
+            # pour le len <= 4, c'est un choix arbitraire.
+            # il est plutôt rare d'avoir une abbr de plus de 4 lettres.
+            if (not word.lower() in ensembleMotsLexique) and (len(word) <= 4) and (word.isalpha()) :
+                new_sms = ''.join([word.lower() for word in sms])
+                mot_et_contexte = (word.lower(), new_sms)
+                ensembleDesMotsHorsLexique.add(mot_et_contexte)
+
+    show_NbMotsHorsLexique(nombreSMS_aTraiter, ensembleDesMotsHorsLexique)
+    # mesfonctions.show_10RandomMotsHorsLexique(ensembleDesMotsHorsLexique)
+
+#=====================================================================================
+#=================== REMPLISSAGE DICO ABBR (fonction de fonctions) ===================
+#=====================================================================================
+
+def remplir_dicoAbbr_aPartir_ensHorsLexique(dicoAbbr, ensembleDesMotsHorsLexique, linkToDbAbbr):
+
+    while 1:
+
+        print(f"---- on a {len(dicoAbbr)} abbr. Up to the next.")
+
+        # on choisit un mot au hasard
+        mot_et_contexte = random.sample(ensembleDesMotsHorsLexique, 1) # produit une liste
+        mot_et_contexte = mot_et_contexte[0] # on a notre tuple
+
+        if len(mot_et_contexte) < 2 :
+            continue
+
+        mot = mot_et_contexte[0]
+        contexte = mot_et_contexte[1]
+
+        # si par hasard, on avait déjà rempli le mot, pas besoin
+        if mot in dicoAbbr.keys():
+            continue
+
+        # sinon, on peut commencer
+        print(f"\n+++++++ NEW WORD +++++++")
+        print(f"- Mot : {mot} \n- Contexte : {contexte}")
+
+        a = input("\nSignification, (0) si vous ne savez pas, (enter) pour quitter : ")
+
+        if isinstance(a, str) and len(a.strip()) > 1 :
+            signification = a.strip()
+            dicoAbbr[mot] = signification
+            print(f"\n------- WORD ADDED -------")
+
+            continue
+
+        elif a.strip() == '0' :
+            continue
+
+        elif a.strip() == '' :
+            dump_dico_abbr(dicoAbbr, linkToDbAbbr)
+            print(f"\nAu revoir. J'ai enregistré le contenu de notre dictionnaire dans '{linkToDbAbbr}'")
+            break
+
+        else :
+            print("Je n'ai pas compris, on reprend.")
