@@ -11,5 +11,15 @@ Vous pouvez essayer ou combiner plusieurs approches.
 
 ## NB
 
-Je vous mets aussi le db_abbr.pickle qui contient les abbréviations déjà ajoutées.
-Donc à chaque fois que le programme est lancé, il suffit de choisir l'option 2 pour continuer à remplir.
+Je vous mets aussi le db_abbr.pickle qui contient quelques abbréviations déjà ajoutées.
+
+Donc à chaque fois que le programme est lancé, vous pouvez choisir l'option 2 pour continuer à remplir.
+
+## Dossier 'heavy_files'
+
+Il contient notre deux fichiers sources.
+Mais vu leur taille, mieux vaut ne pas les toucher par erreur, donc je les mets dans un dossier à part.
+
+## Dossier 'rendu'
+
+Il contient des captures d'écran de l'exécution.
